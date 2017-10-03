@@ -1,13 +1,8 @@
 /**
- * @file   ebbchar.c
- * @author Derek Molloy
- * @date   7 April 2015
+ * @file   Proj1.c
+ * @author Grupo SOb
+ * @date   3 Outubro 2017
  * @version 0.1
- * @brief   An introductory character driver to support the second article of my series on
- * Linux loadable kernel module (LKM) development. This module maps to /dev/ebbchar and
- * comes with a helper C program that can be run in Linux user space to communicate with
- * this the LKM.
- * @see http://www.derekmolloy.ie/ for a full description and follow-up descriptions.
  */
 
 #include <linux/init.h>           // Macros used to mark up functions e.g. __init __exit
@@ -20,9 +15,11 @@
 #define  CLASS_NAME  "ebb"        ///< The device class -- this is a character device driver
 
 MODULE_LICENSE("GPL");            ///< The license type -- this affects available functionality
-MODULE_AUTHOR("Derek Molloy");    ///< The author -- visible when you use modinfo
-MODULE_DESCRIPTION("A simple Linux char driver for the BBB");  ///< The description -- see modinfo
+MODULE_AUTHOR("Grupo SOb");    ///< The author -- visible when you use modinfo
+MODULE_DESCRIPTION("Projeto 1 - Sistemas Operacionais B");  ///< The description -- see modinfo
 MODULE_VERSION("0.1");            ///< A version number to inform users
+
+static char *key = "bla"; //Chave simétrica que será usada para cifrar e decifrar
 
 static int    majorNumber;                  ///< Stores the device number -- determined automatically
 static char   message[256] = {0};           ///< Memory for the string that is passed from userspace
@@ -49,6 +46,9 @@ static struct file_operations fops =
    .release = dev_release,
 };
 
+module_param(key, charp, 0000);
+MODULE_PARM_DESC(key, "Chave simétrica que será usada para cifrar e decifrar");
+
 /** @brief The LKM initialization function
  *  The static keyword restricts the visibility of the function to within this C file. The __init
  *  macro means that for a built-in driver (not a LKM) the function is only used at initialization
@@ -57,6 +57,7 @@ static struct file_operations fops =
  */
 static int __init ebbchar_init(void){
    printk(KERN_INFO "EBBChar: Initializing the EBBChar LKM\n");
+   printk(KERN_INFO "Valor de  KEY:%s\n", key);
 
    // Try to dynamically allocate a major number for the device -- more difficult but worth it
    majorNumber = register_chrdev(0, DEVICE_NAME, &fops);
