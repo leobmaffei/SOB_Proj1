@@ -19,7 +19,7 @@ MODULE_AUTHOR("Grupo SOb");
 MODULE_DESCRIPTION("Projeto 1 - Sistemas Operacionais B");
 MODULE_VERSION("0.1");
 
-static char *key = "bla"; //Chave simétrica que será usada para cifrar e decifrar
+static char *key = "ValorTeste"; //Chave simétrica que será usada para cifrar e decifrar
 
 static int    majorNumber;
 static char   message[256] = {0};
