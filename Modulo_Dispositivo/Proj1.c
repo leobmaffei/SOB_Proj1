@@ -118,6 +118,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 
    if (error_count==0){            // if true then have success
       printk(KERN_INFO "Proj1: Sent %d characters to the user\n", size_of_message);
+      printk(KERN_INFO "Proj1: String content: %s \n", message);
       return (size_of_message=0);  // clear the position to the start and return 0
    }
    else {
@@ -138,6 +139,7 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
    sprintf(message, "%s(%zu letters)", buffer, len);   // appending received string with its length
    size_of_message = strlen(message);                 // store the length of the stored message
    printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
+   printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
    return len;
 }
 

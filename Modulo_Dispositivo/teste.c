@@ -8,6 +8,7 @@
  * must be called /dev/ebbchar.
  * @see http://www.derekmolloy.ie/ for a full description and follow-up descriptions.
 */
+#include<cstdint.h>
 #include<stdio.h>
 #include<stdlib.h>
 #include<errno.h>
@@ -18,11 +19,39 @@
 #define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
 static char receive[BUFFER_LENGTH];     ///< The receive buffer from the LKM
 
-int main(){
+int main(int argc, char * argv[]){
    int ret, fd;
    char stringToSend[BUFFER_LENGTH];
+   size_t opcao = reinterpret_cast<size_t>(argv[1]);
+     
+
+   if (argc != 3){
+	printf("Quatidade de Argumentos Errada\n");
+        exit(0);
+   }
+
+  
+      switch(opcao){
+      case 'c':
+         printf("Cifrar\n");
+         break;
+      case 'd':
+         printf("Decifrar\n");
+         break;
+      case 'h':
+         printf("Historico\n");
+         break;
+      default:
+         printf("Opcao invalida\n");
+         exit(0);
+      }
+
+   
+  
+
+
    printf("Starting device test code example...\n");
-   fd = open("/dev/ebbchar", O_RDWR);             // Open the device with read/write access
+   fd = open("/dev/PROJ1", O_RDWR);             // Open the device with read/write access
    if (fd < 0){
       perror("Failed to open the device...");
       return errno;
