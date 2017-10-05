@@ -13,6 +13,7 @@
 #include <asm/uaccess.h>
 #define  DEVICE_NAME "PROJ1"
 #define  CLASS_NAME  "proj1"
+#define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Grupo SOb");
@@ -136,10 +137,37 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
  *  @param offset The offset if required
  */
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset){
-   sprintf(message, "%s(%zu letters)", buffer, len);   // appending received string with its length
-   size_of_message = strlen(message);                 // store the length of the stored message
-   printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
-   printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
+   char opcao[BUFFER_LENGTH];
+   strcpy( opcao, buffer );
+
+   buffer = buffer + 1; 
+
+   switch(opcao[0]){
+      case 'c':
+         sprintf(message, "%s(Cifrar)", buffer);   // appending received string with its length
+         size_of_message = strlen(message);                 // store the length of the stored message
+         printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
+         printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
+         return len;
+         break;
+      case 'd':
+         sprintf(message, "%s(Decifrar)", buffer);   // appending received string with its length
+         size_of_message = strlen(message);                 // store the length of the stored message
+         printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
+         printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
+         return len;
+         break;
+      case 'h':
+         sprintf(message, "%s(Hash)", buffer);   // appending received string with its length
+         size_of_message = strlen(message);                 // store the length of the stored message
+         printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
+         printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
+         return len;
+         break;
+      default:
+         break;
+   }
+
    return len;
 }
 
