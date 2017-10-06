@@ -14,11 +14,12 @@
 #define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
 static char receive[BUFFER_LENGTH];     ///< The receive buffer from the LKM
 
-int cifragen(char ParaCifrar[BUFFER_LENGTH]);
 
 int main(int argc, char * argv[]){
-     
-   char opcao[1];
+   
+   int ret, fd;
+   char paraCifrar[BUFFER_LENGTH];
+   char opcao[BUFFER_LENGTH];
    strcpy( opcao, argv[1] );
    printf("Opcao:%s \n", opcao);
 
@@ -26,26 +27,28 @@ int main(int argc, char * argv[]){
 	   printf("Quatidade de Argumentos Errada\n");
       exit(0);
    }
-      switch(opcao[0]){
-         case 'c':
-            printf("Cifrar\n");
-            cifragen(argv[2]);
-            break;
-         case 'd':
-            printf("Decifrar\n");
-            break;
-         case 'h':
-            printf("Historico\n");
-            break;
-         default:
-            printf("Opcao invalida\n");
-            exit(0);
-      }
-}
+   switch(opcao[0]){
+      case 'c':
+         printf("Cifrar\n");
+         strcat(opcao, argv[2]);
+         strcpy(paraCifrar, opcao);
+         break;
+      case 'd':
+         printf("Decifrar\n");
+         strcat(opcao, argv[2]);
+         strcpy(paraCifrar, opcao);
+         break;
+      case 'h':
+         printf("Hash\n");
+         strcat(opcao, argv[2]);
+         strcpy(paraCifrar, opcao);
+         break;
+      default:
+         printf("Opcao invalida\n");
+         exit(0);
+   }
 
-
-int cifragen(char paraCifrar[BUFFER_LENGTH]){
-   int ret, fd;
+   //system("insmod Proj1.ko key=\"chave\"");
 
    printf("Iniciando programa de cifragem de dados...\n");
    fd = open("/dev/PROJ1", O_RDWR);             // Open the device with read/write access
@@ -73,6 +76,6 @@ int cifragen(char paraCifrar[BUFFER_LENGTH]){
       return errno;
    }
    printf("A mensagem recebida foi: [%s]\n", receive);
-   printf("End of the program\n");
+   printf("Fim do programa.\n");
    return 0;
-   }
+}
