@@ -145,7 +145,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset){
    char opcao[BUFFER_LENGTH];
    int ret=0;
-   unsigned char *digest = "oi";
+   unsigned char *digest = "oi"; //retorno do hash
    strcpy( opcao, buffer );
 
    buffer = buffer + 1; 
@@ -235,7 +235,7 @@ static int calc_hash(struct crypto_shash *alg, const unsigned char *data, unsign
 static int test_hash(const unsigned char *data, unsigned int datalen, unsigned char *digest)
 {
    struct crypto_shash *alg;
-   char *hash_alg_name = "sha1-padlock-nano";
+   char *hash_alg_name = "sha1";//tem que ser o sha1 apenas  ver em cat /proc/crypto
    int ret;
 
    alg = crypto_alloc_shash(hash_alg_name, CRYPTO_ALG_TYPE_SHASH, 0);
