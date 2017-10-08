@@ -12,16 +12,16 @@
 #include <unistd.h>
 
 #define BUFFER_LENGTH 256               ///< The buffer length (crude but fine)
-static char receive[BUFFER_LENGTH];     ///< The receive buffer from the LKM
+static unsigned char receive[BUFFER_LENGTH];     ///< The receive buffer from the LKM
 
 
 int main(int argc, char * argv[]){
    
-   int ret, fd;
+   int ret, fd, a = 0;
    char paraCifrar[BUFFER_LENGTH];
    char opcao[BUFFER_LENGTH];
    strcpy( opcao, argv[1] );
-   printf("Opcao:%s \n", opcao);
+   printf("Opcao Escolhida:%s \n", opcao);
 
    if (argc != 3){
 	   printf("Quatidade de Argumentos Errada\n");
@@ -29,17 +29,17 @@ int main(int argc, char * argv[]){
    }
    switch(opcao[0]){
       case 'c':
-         printf("Cifrar\n");
+         printf("### CIFRAR ###\n");
          strcat(opcao, argv[2]);
          strcpy(paraCifrar, opcao);
          break;
       case 'd':
-         printf("Decifrar\n");
+         printf("### DECIFRAR ###\n");
          strcat(opcao, argv[2]);
          strcpy(paraCifrar, opcao);
          break;
       case 'h':
-         printf("Hash\n");
+         printf("### CALCULO DO HASH ###\n");
          strcat(opcao, argv[2]);
          strcpy(paraCifrar, opcao);
          break;
@@ -56,10 +56,15 @@ int main(int argc, char * argv[]){
       perror("Falha ao abrir o Arquivo do dispositivo...");
       return errno;
    }
-   //printf("Type in a short string to send to the kernel module:\n");
-   //scanf("%[^\n]%*c", stringToSend);                // Read in a string (with spaces)
+   
+   if (opcao[0] == 'c'){
 
-   printf("Mensagem escrita no Arquivo do dispositivo [ %s ].\n", paraCifrar);
+   }else if (opcao[0] == 'd'){
+
+   }else if(opcao[0] == 'h'){
+
+   }
+   printf("Mensagem escrita no Arquivo do dispositivo [ %s ].\n", argv[2]);
    ret = write(fd, paraCifrar, strlen(paraCifrar)); // Send the string to the LKM
    if (ret < 0){
       perror("Falha ao ler a mensagem do dispositivo.");
@@ -75,7 +80,13 @@ int main(int argc, char * argv[]){
       perror("Falha ao ler a mensagem do dispositivo.");
       return errno;
    }
-   printf("A mensagem recebida foi: [%s]\n", receive);
+   printf("tamanho da resposta %zu \n", strlen(receive));
+   printf("A mensagem recebida foi: [ ");
+   for(a = 0; a < strlen(receive); a++){
+            printf("%X", receive[a]);
+   }
+   printf(" ]\n");
    printf("Fim do programa.\n");
    return 0;
 }
+
