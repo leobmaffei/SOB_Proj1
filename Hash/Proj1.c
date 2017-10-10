@@ -8,6 +8,7 @@
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/device.h> 
+#include <linux/vmalloc.h> 
 #include <linux/kernel.h>
 #include <linux/fs.h>
 #include <crypto/hash.h>
@@ -40,6 +41,7 @@ static int     dev_release(struct inode *, struct file *);
 static ssize_t dev_read(struct file *, char *, size_t, loff_t *);
 static ssize_t dev_write(struct file *, const char *, size_t, loff_t *);
 static int test_hash(const unsigned char *data, unsigned int datalen, unsigned char *digest);
+
 
 
 static struct file_operations fops =
@@ -145,7 +147,7 @@ static ssize_t dev_read(struct file *filep, char *buffer, size_t len, loff_t *of
 static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, loff_t *offset){
    char opcao[BUFFER_LENGTH];
    int ret=0;
-   unsigned char *digest = "oi"; //retorno do hash
+   unsigned char *digest = vmalloc(16); //retorno do hash
    strcpy( opcao, buffer );
 
    buffer = buffer + 1; 
@@ -166,14 +168,16 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
          return len;
          break;
       case 'h':
-         sprintf(message, "%s(Hash)", buffer);   // appending received string with its length
+         sprintf(message, "%s", buffer);   // appending received string with its length
          size_of_message = strlen(message);                 // store the length of the stored message
 
          ret = test_hash(message, size_of_message, digest);
 
          printk(KERN_INFO "Proj1: Received %zu characters from the user\n", len);
+         printk(KERN_INFO "Proj1: Data received: %s \n", message);
          printk(KERN_INFO "Proj1: HASH = %s \n", digest);
-         printk(KERN_INFO "Proj1: Data received: %s \n", buffer);
+         strcpy( message, digest );
+         size_of_message = strlen(message); 
          return len;
          break;
       default:
@@ -182,6 +186,8 @@ static ssize_t dev_write(struct file *filep, const char *buffer, size_t len, lof
 
    return len;
 }
+
+
 
 /** @brief The device release function that is called whenever the device is closed/released by
  *  the userspace program
@@ -238,7 +244,7 @@ static int test_hash(const unsigned char *data, unsigned int datalen, unsigned c
    char *hash_alg_name = "sha1";//tem que ser o sha1 apenas  ver em cat /proc/crypto
    int ret;
 
-   alg = crypto_alloc_shash(hash_alg_name, CRYPTO_ALG_TYPE_SHASH, 0);
+   alg = crypto_alloc_shash(hash_alg_name, 0, CRYPTO_ALG_ASYNC);
    if (IS_ERR(alg)) {
       pr_info("can't alloc alg %s\n", hash_alg_name);
       return PTR_ERR(alg);
